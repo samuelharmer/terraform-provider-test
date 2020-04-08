@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  BIN: terraform-provider-gandi
+
 jobs:
   build:
     name: Build
@@ -31,9 +34,9 @@ jobs:
               dep ensure
           fi
       - name: Build
-        run: go build -v .
+        run: go build -v -o ${BIN} .
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
-          name: terraform-provider-gandi
-          path: terraform-provider-gandi
+          name: ${{ env.BIN }}
+          path: ${{ env.BIN }}
