@@ -1,0 +1,32 @@
+# Copies the binary from the Build workflow to the Release
+
+name: Release
+
+on:
+  release:
+    types:
+      - created
+      # - published
+
+jobs:
+  release:
+    name: Copy Build artifact to Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Build artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: build.yaml
+          commit: ${{ github.sha }}
+          name: terraform-provider-gandi
+          path: ./
+      - name: Upload to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_content_type: application/octet-stream
+          asset_name: terraform-provider-gandi
+          asset_path: terraform-provider-gandi
+          upload_url: ${{ github.event.release.upload_url }}
